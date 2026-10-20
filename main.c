@@ -1,15 +1,16 @@
-
+#include <time.h.
 
 /* Используем, чтобы получить текущее время в секундах */
 int timer_init()
 {
-
+  return (int)time(NULL); 
 }
 
 /* Просто вычисляет количество секунд между timer_init и текущим моментом */
 int timer_res(int from_timer_init)
 {
-
+  int current_time = (int)time(NULL);
+  return current_time - from_timer_init;
 }
 
 /* Возвращает число из диапозона [min, max] */
