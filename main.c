@@ -73,10 +73,17 @@ void start_game(int gamemode)
 
 }
 
+/* Предлагает пользователю выбор из нескольких режимов,
+	а потом считывает его выбор и возвращает в виде цифры (1, 2 или 3) */
+int get_gamemode()
+{
+
+}
+
 int main()
 {
 	int gamemode;
-	get_gamemode(); /* Пользователь вводит режим */
+	gamemode = get_gamemode(); /* Пользователь вводит режим */
 	start_game(gamemode);
 	return 0;
 }
