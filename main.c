@@ -20,13 +20,29 @@ int timer_res(int from_timer_init)
 /* Возвращает число из диапозона [min, max] */
 int get_random_num(int min, int max)
 {
-
+return min + rand() % (max - min + 1);
+}
 }
 
 /* Возвращает слово из случайных символов определённой длины*/
 char* get_random_chars_word(int word_len)
 {
+if (word_len <= 0) return NULL;
 
+    char *word = (char *)malloc(word_len + 1);
+    if (word == NULL) {
+        return NULL;
+    }
+
+    const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    int charset_size = sizeof(charset) - 1;
+
+    for (int i = 0; i < word_len; i++) {
+        word[i] = charset[rand() % charset_size];
+    }
+
+    word[word_len] = '\0';
+    return word; 
 }
 
 /* Открывает файл на чтение и считает в нём строки, после чего закрывает файл */
