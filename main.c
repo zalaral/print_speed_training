@@ -1,4 +1,8 @@
-#include <time.h.
+#include <time.h.>
+
+#define WORDS_SRC english_words
+
+#define USR_SRC users_string
 
 /* Используем, чтобы получить текущее время в секундах */
 int timer_init()
