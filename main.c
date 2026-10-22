@@ -1,4 +1,5 @@
 #include <time.h.>
+#include <stdio.h>
 
 #define WORDS_SRC english_words
 
@@ -32,7 +33,22 @@ char* get_random_chars_word(int word_len)
 /* Открывает файл на чтение и считает в нём строки, после чего закрывает файл */
 int strs_cnt_in_file(char *filename)
 {
-
+	FILE *myfile = fopen(filename, "r");
+    if (myfile == NULL) {
+        printf("Ошибка: не удалось открыть файл %s\n", filename);
+        return -1;
+    }
+    
+    int count = 0;
+    char buffer[1024];
+    
+    while (fgets(buffer, sizeof(buffer), myfile) != NULL) {
+        count++;
+    }
+    
+    fclose(myfile);
+    return count;
+}
 }
 
 /* Возвращает строку под определённым номером из файла */
