@@ -97,13 +97,29 @@ char *get_str_from_file(char *filename, int str_num)
 /* Читает строку, которую ввёл пользователь, после чего возвращает её */
 char *read_str_from_user()
 {
-
+	char buffer[256]; 
+	if (fgets(buffer, sizeof(buffer), stdin)) { 
+		buffer[strcspn(buffer, "\r\n")] = '\0'; 
+		return strdup(buffer); 
+	} 
+	return strdup(""); 
 }
 
 /* Считает количество ошибок между строками */
 int mistakes_count(char *original_str, char *users_str)
 {
+	int mistakes = 0; 
+	int len_orig = (int)strlen(original_str); 
+	int len_user = (int)strlen(users_str); 
+	int min_len = (len_orig < len_user) ? len_orig : len_user; 
 
+	for (int i = 0; i < min_len; i++) { 
+		if (original_str[i] != users_str[i]) { 
+			mistakes++; 
+		} 
+	} 
+	mistakes += abs(len_orig - len_user); 
+	return mistakes; 
 }
 
 /* Режим слов из случайных символов, возвращает колличество ошибок */
@@ -132,9 +148,17 @@ void start_game(int gamemode)
 
 /* Предлагает пользователю выбор из нескольких режимов,
 	а потом считывает его выбор и возвращает в виде цифры (1, 2 или 3) */
+#define MODES_TEXT \
+	_("\n1. Строка из случайных символов\n" \
+	"2. Случайные слова\n" \
+	"3. Пользовательский файл\n"
 int get_gamemode()
 {
-
+	int mode;
+	pruintf("Выберете режим:");
+	printf(MODES_TEXT);
+	scanf("%d", &mode);
+	return mode;
 }
 
 int main()
