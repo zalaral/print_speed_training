@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <windows.h>
 
 #define WORDS_SRC "english_words"
 
@@ -219,7 +220,7 @@ void clean_stdin()
 	"3. Пользовательский файл\n"
 int get_gamemode()
 {
-	int mode;
+	int mode = 0;
 	printf("Выберете режим:\n");
 	printf(MODES_TEXT);
 	scanf("%d", &mode);
@@ -230,6 +231,8 @@ int get_gamemode()
 int main()
 {
 	int gamemode;
+	SetConsoleCP(65001);
+	SetConsoleOutputCP(65001);
 	gamemode = get_gamemode(); /* Пользователь вводит режим */
 	start_game(gamemode);
 	return 0;
