@@ -1,9 +1,11 @@
-#include <time.h.>
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
 
-#define WORDS_SRC english_words
+#define WORDS_SRC "english_words"
 
-#define USR_SRC users_string
+#define USR_SRC "users_string"
 
 /* Используем, чтобы получить текущее время в секундах */
 int timer_init()
@@ -130,6 +132,7 @@ int random_generated_words_mode(int words_cnt, int word_len)
 	
 	for(i=0; i!=words_cnt; i++){
 		rand_gen_word = get_random_chars_word(word_len);
+		printf("Повторите строку:\n%s\n\n", rand_gen_word);
 		users_answer = read_str_from_user();
 		mistakes += mistakes_count(rand_gen_word, users_answer);
 	}
@@ -141,12 +144,14 @@ int random_words_mode(int words_cnt)
 {
 	int mistakes = 0;
 	int i;
-	int words_cnt = strs_cnt_in_file(WORDS_SRC);
+	int src_size = strs_cnt_in_file(WORDS_SRC);
 	char *rand_word;
 	char *users_answer;
 	
 	for(i=0; i!=words_cnt; i++){
-		rand_word = get_str_from_file(get_random_num(0, words_cnt-1));
+		rand_word = get_str_from_file(WORDS_SRC,
+					get_random_num(0, src_size-1));
+		printf("Повторите строку:\n%s\n\n", rand_word);
 		users_answer = read_str_from_user();
 		mistakes += mistakes_count(rand_word, users_answer);
 	}
@@ -158,12 +163,17 @@ int random_users_strings_mode(int strings_cnt)
 {
 	int mistakes = 0;
 	int i;
-	int words_cnt = strs_cnt_in_file(USER_SRC);
+	int src_size = strs_cnt_in_file(USR_SRC);
 	char *rand_word;
 	char *users_answer;
 	
-	for(i=0; i!=words_cnt; i++){
-		rand_word = get_str_from_file(get_random_num(0, words_cnt-1));
+	if(src_size == -1){
+		return -1;
+	}
+	for(i=0; i!=strings_cnt; i++){
+		rand_word = get_str_from_file(USR_SRC,
+					get_random_num(0, src_size-1));
+		printf("Повторите строку:\n%s\n\n", rand_word);
 		users_answer = read_str_from_user();
 		mistakes += mistakes_count(rand_word, users_answer);
 	}
@@ -174,34 +184,46 @@ int random_users_strings_mode(int strings_cnt)
 void start_game(int gamemode)
 {
 	int timer;
-	int miss_snt;
+	int mistakes;
 	
-	timer = timer_imit();
+	timer = timer_init();
 	if(gamemode == 1){
 		mistakes = random_generated_words_mode(1, 15);
 	} else if(gamemode == 2){
 		mistakes = random_words_mode(3);
 	} else if(gamemode == 3){
-		mistakes = random_esers_strings_mode(3);
+		mistakes = random_users_strings_mode(3);
 	} else {
 		fprintf(stderr, "%d: incorrect mode", gamemode);
 		return;
 	}
-	printf("время: %d, ошибки: %d", timer_res(timer), miss_cnt);
+	if(mistakes != -1){
+		printf("время: %d, ошибки: %d\n", timer_res(timer), mistakes);
+	}
+}
+
+void clean_stdin()
+{
+	char c;
+	c = getchar();
+	while((c!=EOF)&&(c!='\n')){
+		c = getchar();
+	}
 }
 
 /* Предлагает пользователю выбор из нескольких режимов,
 	а потом считывает его выбор и возвращает в виде цифры (1, 2 или 3) */
 #define MODES_TEXT \
-	_("\n1. Строка из случайных символов\n" \
+	"\n1. Строка из случайных символов\n" \
 	"2. Случайные слова\n" \
 	"3. Пользовательский файл\n"
 int get_gamemode()
 {
 	int mode;
-	pruintf("Выберете режим:");
+	printf("Выберете режим:\n");
 	printf(MODES_TEXT);
 	scanf("%d", &mode);
+	clean_stdin();
 	return mode;
 }
 
