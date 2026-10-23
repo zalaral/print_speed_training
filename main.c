@@ -2,7 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+#ifndef LINUX
 #include <windows.h>
+#endif
 
 #define WORDS_SRC "english_words"
 
@@ -235,21 +238,17 @@ int get_gamemode()
 int main()
 {
 	int gamemode;
+	#ifndef LINUX
 	SetConsoleCP(65001);
 	SetConsoleOutputCP(65001);
-
+	#endif
 	while (1)
 	{
 		gamemode = get_gamemode(); /* Пользователь вводит режим */
-
-		/* На каждой итерации проверяй, что число не равно 4 */
-		if (gamemode == 4)
-		{
+		if (gamemode == 4) {
 			break;
 		}
-
 		start_game(gamemode);
 	}
-
 	return 0;
 }
