@@ -1,5 +1,7 @@
-#include <time.h.>
+#include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define WORDS_SRC english_words
 
@@ -97,13 +99,58 @@ char *get_str_from_file(char *filename, int str_num)
 /* Читает строку, которую ввёл пользователь, после чего возвращает её */
 char *read_str_from_user()
 {
+    int capacity = 100;
+    int len = 0;
+    char *str = (char *)malloc(capacity);
+    if (str == NULL) {
+        return NULL;
+    }
 
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+        /* Если место кончается, увеличиваем память вдвое */
+        if (len + 1 >= capacity) {
+            capacity *= 2;
+            char *tmp = (char *)realloc(str, capacity);
+            if (tmp == NULL) {
+                free(str);
+                return NULL;
+            }
+            str = tmp;
+        }
+        str[len] = (char)c;
+        len++;
+    }
+
+    str[len] = '\0';
+    return str;
 }
 
 /* Считает количество ошибок между строками */
 int mistakes_count(char *original_str, char *users_str)
 {
+    int mistakes = 0;
+    int i = 0;
 
+    /* Сравниваем символы на одинаковых позициях */
+    while (original_str[i] != '\0' && users_str[i] != '\0') {
+        if (original_str[i] != users_str[i]) {
+            mistakes++;
+        }
+        i++;
+    }
+
+    /* Недостающие или лишние символы тоже считаются ошибками */
+    while (original_str[i] != '\0') {
+        mistakes++;
+        i++;
+    }
+    while (users_str[i] != '\0') {
+        mistakes++;
+        i++;
+    }
+
+    return mistakes;
 }
 
 /* Режим слов из случайных символов, возвращает колличество ошибок */
