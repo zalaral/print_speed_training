@@ -23,7 +23,6 @@ int get_random_num(int min, int max)
 {
 return min + rand() % (max - min + 1);
 }
-}
 
 /* Возвращает слово из случайных символов определённой длины*/
 char* get_random_chars_word(int word_len)
@@ -64,7 +63,6 @@ int strs_cnt_in_file(char *filename)
     
     fclose(myfile);
     return count;
-}
 }
 
 /* Возвращает строку под определённым номером из файла */
@@ -125,25 +123,71 @@ int mistakes_count(char *original_str, char *users_str)
 /* Режим слов из случайных символов, возвращает колличество ошибок */
 int random_generated_words_mode(int words_cnt, int word_len)
 {
-
+	int mistakes = 0;
+	int i;
+	char *rand_gen_word;
+	char *users_answer;
+	
+	for(i=0; i!=words_cnt; i++){
+		rand_gen_word = get_random_chars_word(word_len);
+		users_answer = read_str_from_user();
+		mistakes += mistakes_count(rand_gen_word, users_answer);
+	}
+	return mistakes;
 }
 
 /* Берём слова из файла под именем WORDS_SRC и возвращаем колличество ошибок */
 int random_words_mode(int words_cnt)
 {
-
+	int mistakes = 0;
+	int i;
+	int words_cnt = strs_cnt_in_file(WORDS_SRC);
+	char *rand_word;
+	char *users_answer;
+	
+	for(i=0; i!=words_cnt; i++){
+		rand_word = get_str_from_file(get_random_num(0, words_cnt-1));
+		users_answer = read_str_from_user();
+		mistakes += mistakes_count(rand_word, users_answer);
+	}
+	return mistakes;
 }
 
 /* Берём строки из файла под именем USER_SRC и возвращаем колличество ошибок */
 int random_users_strings_mode(int strings_cnt)
 {
-
+	int mistakes = 0;
+	int i;
+	int words_cnt = strs_cnt_in_file(USER_SRC);
+	char *rand_word;
+	char *users_answer;
+	
+	for(i=0; i!=words_cnt; i++){
+		rand_word = get_str_from_file(get_random_num(0, words_cnt-1));
+		users_answer = read_str_from_user();
+		mistakes += mistakes_count(rand_word, users_answer);
+	}
+	return mistakes;
 }
 
 /* Запускает один из трёх режимов, засекает время, выводит рез-ты */
 void start_game(int gamemode)
 {
-
+	int timer;
+	int miss_snt;
+	
+	timer = timer_imit();
+	if(gamemode == 1){
+		mistakes = random_generated_words_mode(1, 15);
+	} else if(gamemode == 2){
+		mistakes = random_words_mode(3);
+	} else if(gamemode == 3){
+		mistakes = random_esers_strings_mode(3);
+	} else {
+		fprintf(stderr, "%d: incorrect mode", gamemode);
+		return;
+	}
+	printf("время: %d, ошибки: %d", timer_res(timer), miss_cnt);
 }
 
 /* Предлагает пользователю выбор из нескольких режимов,
