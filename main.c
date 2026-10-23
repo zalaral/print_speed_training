@@ -9,7 +9,15 @@
 
 #define WORDS_SRC "english_words"
 
-#define USR_SRC "users_string"
+#define USR_SRC "users_strings"
+
+#define RAND_GEN_WORD_COUNT 1	/* Колличество слов из случайных символов */
+
+#define RAND_GEN_WORD_LEN 10	/* Длина слов из случайных символов */
+
+#define RAND_WORD_COUNT 3	/* Колличество случайных слов */
+
+#define RAND_USRS_STRS_COUNT 1	/* Колличество случайных строк пользователя */
 
 /* Используем, чтобы получить текущее время в секундах */
 int timer_init()
@@ -122,7 +130,9 @@ int mistakes_count(char* original_str, char* users_str)
 			mistakes++;
 		}
 	}
-	mistakes += abs(len_orig - len_user);
+	if(len_orig > len_user){
+		mistakes += len_orig - len_user;
+	}
 	return mistakes;
 }
 
@@ -174,6 +184,10 @@ int random_users_strings_mode(int strings_cnt)
 	if (src_size == -1) {
 		return -1;
 	}
+	if (src_size == 0) {
+		fprintf(stderr, "Error: %s is empty\n", USR_SRC);
+		return -1;
+	}
 	for (i = 0; i != strings_cnt; i++) {
 		rand_word = get_str_from_file(USR_SRC,
 			get_random_num(0, src_size - 1));
@@ -192,13 +206,14 @@ void start_game(int gamemode)
 
 	timer = timer_init();
 	if (gamemode == 1) {
-		mistakes = random_generated_words_mode(1, 15);
+		mistakes = random_generated_words_mode(RAND_GEN_WORD_COUNT,
+							RAND_GEN_WORD_LEN);
 	}
 	else if (gamemode == 2) {
-		mistakes = random_words_mode(3);
+		mistakes = random_words_mode(RAND_WORD_COUNT);
 	}
 	else if (gamemode == 3) {
-		mistakes = random_users_strings_mode(3);
+		mistakes = random_users_strings_mode(RAND_USRS_STRS_COUNT);
 	}
 	else {
 		fprintf(stderr, "%d: incorrect mode", gamemode);
