@@ -1,4 +1,5 @@
 #include <time.h.>
+#include <stdio.h>
 
 #define WORDS_SRC english_words
 
@@ -48,13 +49,49 @@ if (word_len <= 0) return NULL;
 /* Открывает файл на чтение и считает в нём строки, после чего закрывает файл */
 int strs_cnt_in_file(char *filename)
 {
-
+	FILE *myfile = fopen(filename, "r");
+    if (myfile == NULL) {
+        printf("Ошибка: не удалось открыть файл %s\n", filename);
+        return -1;
+    }
+    
+    int count = 0;
+    char buffer[1024];
+    
+    while (fgets(buffer, sizeof(buffer), myfile) != NULL) {
+        count++;
+    }
+    
+    fclose(myfile);
+    return count;
+}
 }
 
 /* Возвращает строку под определённым номером из файла */
 char *get_str_from_file(char *filename, int str_num)
 {
-
+	FILE *myfile = fopen(filename, "r");
+    if (myfile == NULL) {
+        printf("Ошибка: не удалось открыть файл %s\n", filename);
+        return NULL;
+    }
+    
+    char *result = NULL;
+    char buffer[1024];
+    int current_line = 0;
+    
+    while (fgets(buffer, sizeof(buffer), myfile) != NULL) {
+        if (current_line == str_num) {
+            // Убираем символ новой строки в конце
+            buffer[strcspn(buffer, "\n")] = '\0';
+            result = strdup(buffer);
+            break;
+        }
+        current_line++;
+    }
+    
+    fclose(myfile);
+    return result;
 }
 
 /* Читает строку, которую ввёл пользователь, после чего возвращает её */
